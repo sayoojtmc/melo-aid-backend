@@ -1,0 +1,4 @@
+.vscode
+proj.egg-info
+__pycache__
+onsets_frames_wavinput.tflite
