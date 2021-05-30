@@ -5,6 +5,9 @@ from routes.detect import generate
 from werkzeug.utils import secure_filename
 import bcrypt
 import pymongo
+
+# Project constants import
+from constants import BASE_DIR
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -14,6 +17,7 @@ db = client.get_database('total_records')
 records = db.register
 fileName = ""
 out=""
+
 @app.route("/")
 @cross_origin()
 def hello_world():
@@ -24,12 +28,12 @@ app.register_blueprint(auth)
 @cross_origin()
 def upload():
     f = request.files['myFile']
-    f.save("routes/"+secure_filename(f.filename))
+    f.save(BASE_DIR+"routes/"+secure_filename(f.filename))
     fileName=secure_filename(f.filename)
     global out
-    out = generate(fileName).split('/')[1]
+    out = generate(fileName).split('/')[-1]
     print(out)
-    return send_from_directory('routes/',filename=out)
+    return send_from_directory(BASE_DIR+'routes/',filename=out)
 @app.route("/gen")
 @cross_origin()
 def gen():
@@ -39,4 +43,4 @@ def gen():
 @cross_origin()
 def getFile():
     print(out)
-    return send_from_directory('routes/',filename=out)
+    return send_from_directory(BASE_DIR+'routes/',filename=out)

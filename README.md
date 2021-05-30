@@ -8,7 +8,7 @@
 ## VM setup
 1. Install the necessary linux libraries
 ``` 
-sudo apt install python3 libsndfile1 open-ssl python3-pip lib-ssl net-tools apache2
+sudo apt install python3 libsndfile1 open-ssl python3-pip lib-ssl net-tools apache2 ffmpeg
 ```
 2. Restart the VM and install wsgi connector library
 ``` 
