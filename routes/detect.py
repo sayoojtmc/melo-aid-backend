@@ -97,6 +97,8 @@ def generate(fileName):
     songName = '.'.join(songName.split('.')[:-1]) + '.mid'
     midi.write(songName)
     f=open(BASE_DIR + "routes/" + fileName,"r")
+
     res = {'key':keySignature,'fileName':'.'.join(songName.split('.')[:-1]) + '.mid'}
 
     return res    
+

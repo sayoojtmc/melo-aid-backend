@@ -32,11 +32,12 @@ def upload():
     f.save(BASE_DIR+"routes/"+secure_filename(f.filename))
     fileName=secure_filename(f.filename)
     global out
+
     res = generate(fileName)
     out = res['fileName'].split('/')[-1]
     print(out)
     return res
-@app.route("/gen")
+app.route("/gen")
 @cross_origin()
 def gen():
     generate(fileName)
