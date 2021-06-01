@@ -1,13 +1,12 @@
-
-
 import numpy       as np
 import pretty_midi as pm
 import librosa     as lbr
 from   librosa.display import specshow
 import tensorflow  as tf
+from constants import BASE_DIR
 def generate(fileName):
     
-    interp = tf.lite.Interpreter(model_path="onsets_frames_wavinput.tflite")
+    interp = tf.lite.Interpreter(model_path= BASE_DIR + "onsets_frames_wavinput.tflite")
     interp.get_input_details(), interp.get_output_details()
     interp.allocate_tensors()
     inputLen = interp.get_input_details()[0]['shape'][0]
@@ -15,8 +14,8 @@ def generate(fileName):
     interp.invoke()
     for output in interp.get_output_details():
         first32Chords = interp.get_tensor(output['index'])
-        print(output['name'], first32Chords[0].min(), first32Chords[0].max(), '\n', first32Chords, end='\n\n')
-    rate, songName = 16_000, 'routes/'+fileName
+        #print(output['name'], first32Chords[0].min(), first32Chords[0].max(), '\n', first32Chords, end='\n\n')
+    rate, songName = 16_000, BASE_DIR + 'routes/'+fileName
 
     song = lbr.effects.trim(lbr.load(songName, rate)[0])[0]
     songLen = int(lbr.get_duration(song, rate))
@@ -43,8 +42,7 @@ def generate(fileName):
 
 
     midi = pm.PrettyMIDI(initial_tempo=lbr.beat.tempo(song, rate).mean())
-    midi.lyrics += [pm.Lyric('Automatically transcribed from audio:\r\n\t' + songName, 0),
-                    pm.Lyric('Used software created by Boris Shakhovsky', 0)]
+    midi.lyrics += [pm.Lyric('Automatically transcribed from audio:\r\n\t' + songName, 0)]
     track = pm.Instrument(program=pm.instrument_name_to_program('Acoustic Grand Piano'), name='Acoustic Grand Piano')
     midi.instruments += [track]
 
@@ -98,6 +96,7 @@ def generate(fileName):
     midi.key_signature_changes += [pm.KeySignature(pm.key_name_to_key_number(keySignature), 0)]
     songName = '.'.join(songName.split('.')[:-1]) + '.mid'
     midi.write(songName)
-    f=open("routes/"+fileName,"r")
-    return '.'.join(songName.split('.')[:-1]) + '.mid'
-    
+    f=open(BASE_DIR + "routes/" + fileName,"r")
+    res = {'key':keySignature,'fileName':'.'.join(songName.split('.')[:-1]) + '.mid'}
+
+    return res    

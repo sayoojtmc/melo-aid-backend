@@ -1,12 +1,10 @@
 audioread==2.1.9
 bcrypt==3.2.0
-cryptography==2.1.4
 Flask==1.1.2
 Flask-Cors==3.0.10
 Keras-Preprocessing==1.1.2
 librosa==0.8.0
 matplotlib==3.3.2
-menulibre==2.2.0
 numpy==1.19.2
 pipenv==2020.8.13
 pretty-midi==0.2.9

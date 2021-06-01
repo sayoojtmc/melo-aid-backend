@@ -1,0 +1,1 @@
+BASE_DIR = "/home/meloaid/melo-aid-backend/"
