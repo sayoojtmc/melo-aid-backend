@@ -2,6 +2,7 @@ from flask import Flask,request,send_file,send_from_directory
 from flask_cors import CORS, cross_origin
 from routes.auth import auth
 from routes.detect import generate
+from run_magenta import gen_melody
 from werkzeug.utils import secure_filename
 
 import bcrypt
@@ -35,6 +36,8 @@ def upload():
 
     res = generate(fileName)
     out = res['fileName'].split('/')[-1]
+    
+    gen_melody(res['fileName'])
     print(out)
     return res
 app.route("/gen")
