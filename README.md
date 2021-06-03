@@ -27,3 +27,6 @@ sudo a2dissite 000-default.conf
 sudo a2ensite website.conf
 sudo systemctl reload apache2
 ```
+## Changes made to server
+
+New subdomain `api.meloaid.com` for backend purposes. The generated songs are accessed using `api.meloaid.com\songs\{filename}` on the frontend.
