@@ -38,7 +38,7 @@ def upload():
         audio = video.audio
         audio.write_audiofile(BASE_DIR+"routes/"+"audio-trimmed.mp3")
     else:
-        video = AudioFileClip(BASE_DIR+"routes/"+fileName).subclip(0,20)
+        audio = AudioFileClip(BASE_DIR+"routes/"+fileName).subclip(0,20)
         audio.write_audiofile(BASE_DIR+"routes/"+"audio-trimmed.mp3")
     global out
     fileName="audio-trimmed.mp3"

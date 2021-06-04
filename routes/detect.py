@@ -98,7 +98,50 @@ def generate(fileName):
     midi.write(songName)
     f=open(BASE_DIR + "routes/" + fileName,"r")
 
-    res = {'key':keySignature,'fileName':'.'.join(songName.split('.')[:-1]) + '.mid'}
+    MajorMinor = lambda mj, mn: mj if gamma.index(mj) < gamma.index(mn) else mn + 'm'
 
+    if len(blacks) == 0: keySignature = MajorMinor('C', 'A')
+
+    elif len(blacks) == 1:
+        if blacks[0] == 'F#':
+            assert 'F' not in gamma
+            keySignature = MajorMinor('G', 'E')
+        elif blacks[0] == 'Bb':
+            assert 'B' not in gamma
+            keySignature = MajorMinor('F', 'D')
+        else: assert False
+
+    elif len(blacks) == 2:
+        if blacks == ['C#', 'F#']:
+            assert 'C' not in gamma and 'F' not in gamma
+            keySignature = MajorMinor('D', 'B')
+        elif blacks == ['Bb', 'Eb']:
+            assert 'B' not in gamma and 'E' not in gamma
+            keySignature = MajorMinor('Bb', 'G')
+        else: assert False
+
+    elif len(blacks) == 3:
+        if blacks == ['Ab', 'C#', 'F#']:
+            assert 'C' not in gamma and 'F' not in gamma and 'G' not in gamma
+            keySignature = MajorMinor('A', 'F#')
+        elif blacks == ['Ab', 'Bb', 'Eb']:
+            assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma
+            keySignature = MajorMinor('Eb', 'C')
+        else: assert False
+
+    elif len(blacks) == 4:
+        if blacks == ['Ab', 'C#', 'Eb', 'F#']:
+            assert 'C' not in gamma and 'D' not in gamma and 'F' not in gamma and 'G' not in gamma
+            keySignature = MajorMinor('E', 'C#')
+        elif blacks == ['Ab', 'Bb', 'C#', 'Eb']:
+            assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma and 'D' not in gamma
+            keySignature = MajorMinor('Ab', 'F')
+        else: assert False
+
+    elif 'B' in gamma and 'E' in gamma: keySignature = MajorMinor('B', 'Ab')
+    elif 'C' in gamma and 'F' in gamma: keySignature = MajorMinor('C#', 'Bb')
+    else: assert False
+       
+    res = {'key':keySignature,'fileName':'.'.join(songName.split('.')[:-1]) + '.mid'}
     return res    
 
