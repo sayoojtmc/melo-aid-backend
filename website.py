@@ -7,7 +7,8 @@ from werkzeug.utils import secure_filename
 
 import bcrypt
 import pymongo
-
+import os
+import glob
 # Project constants import
 from constants import BASE_DIR
 app = Flask(__name__)
@@ -17,7 +18,7 @@ app.secret_key = "testing"
 client = pymongo.MongoClient("mongodb://localhost:27017/myapp")
 db = client.get_database('total_records')
 records = db.register
-fileName = ""
+filePath = ""
 out=""
 
 @app.route("/")
@@ -37,16 +38,22 @@ def upload():
     res = generate(fileName)
     out = res['fileName'].split('/')[-1]
     
-    gen_melody(res['fileName'])
+    global filePath
+    filePath=res['fileName']
     print(out)
     return res
-app.route("/gen")
-@cross_origin()
-def gen():
-    generate(fileName)
-    return {"msg":"done"}
 @app.route("/getFile")
 @cross_origin()
 def getFile():
     print(out)
     return send_from_directory(BASE_DIR+'routes/',filename=out)
+@app.route("/genMelody")
+@cross_origin()
+def genMelody():
+    global filePath
+    gen_melody(filePath)
+    list_of_files = glob.glob(BASE_DIR+"magenta/generated/*")
+    files = sorted(list_of_files,key=os.path.getctime)[-3:]
+    for i,j in enumerate(files):
+        files[i] = j.split('/')[-1]
+    return {"files":files} 
