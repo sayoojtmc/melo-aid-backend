@@ -4,8 +4,8 @@ from routes.auth import auth
 from routes.detect import generate
 from run_magenta import gen_melody
 from werkzeug.utils import secure_filename
-
 import bcrypt
+from moviepy.editor import *
 import pymongo
 import os
 import glob
@@ -33,7 +33,15 @@ def upload():
     f = request.files['myFile']
     f.save(BASE_DIR+"routes/"+secure_filename(f.filename))
     fileName=secure_filename(f.filename)
+    if(fileName[-3:] == "mp4"):
+        video = VideoFileClip(BASE_DIR+"routes/"+fileName).subclip(0,20)
+        audio = video.audio
+        audio.write_audiofile(BASE_DIR+"routes/"+"audio-trimmed.mp3")
+    else:
+        video = AudioFileClip(BASE_DIR+"routes/"+fileName).subclip(0,20)
+        audio.write_audiofile(BASE_DIR+"routes/"+"audio-trimmed.mp3")
     global out
+    fileName="audio-trimmed.mp3"
 
     res = generate(fileName)
     out = res['fileName'].split('/')[-1]
