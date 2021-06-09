@@ -2,6 +2,7 @@ from flask import Flask,request,send_file,send_from_directory
 from flask_cors import CORS, cross_origin
 from routes.auth import auth
 from routes.detect import generate
+from midi2audio import FluidSynth
 from run_magenta import gen_melody
 from werkzeug.utils import secure_filename
 import bcrypt
@@ -64,4 +65,9 @@ def genMelody():
     files = sorted(list_of_files,key=os.path.getctime)[-3:]
     for i,j in enumerate(files):
         files[i] = j.split('/')[-1]
+    FILE_DIR=BASE_DIR+"magenta/generated/"
+    for i,j in enumerate(files):
+        FluidSynth().midi_to_audio(FILE_DIR+j,FILE_DIR+j.split('.')[0]+".wav")
+        files[i]=j.split('.')[0]+".wav"
+
     return {"files":files} 
