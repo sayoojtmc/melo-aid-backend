@@ -67,7 +67,7 @@ def genMelody():
         files[i] = j.split('/')[-1]
     FILE_DIR=BASE_DIR+"magenta/generated/"
     for i,j in enumerate(files):
-        FluidSynth().midi_to_audio(FILE_DIR+j,FILE_DIR+j.split('.')[0]+".wav")
-        files[i]=j.split('.')[0]+".wav"
+        os.system("timidity {} -Ow -o - | ffmpeg -i - -acodec libmp3lame -ab 64k {}".format(FILE_DIR+j,FILE_DIR+j.split('.')[0]+'.mp3'))
+        files[i]=j.split('.')[0]+".mp3"
 
     return {"files":files} 
