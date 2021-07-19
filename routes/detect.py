@@ -90,58 +90,59 @@ def generate(fileName):
     chroma = lbr.feature.chroma_cqt(song, rate).sum(1)
     major = [np.corrcoef(chroma, np.roll([6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88], i))[0, 1] for i in range(12)]
     minor = [np.corrcoef(chroma, np.roll([6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17], i))[0, 1] for i in range(12)]
-    keySignature = (['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'][
+    keySignature_chroma = (['C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'][
         major.index(max(major)) if max(major) > max(minor) else minor.index(max(minor)) - 3]
                     + ('m' if max(major) < max(minor) else ''))
-    midi.key_signature_changes += [pm.KeySignature(pm.key_name_to_key_number(keySignature), 0)]
+    midi.key_signature_changes += [pm.KeySignature(pm.key_name_to_key_number(keySignature_chroma), 0)]
     songName = '.'.join(songName.split('.')[:-1]) + '.mid'
     midi.write(songName)
     f=open(BASE_DIR + "routes/" + fileName,"r")
 
     MajorMinor = lambda mj, mn: mj if gamma.index(mj) < gamma.index(mn) else mn + 'm'
+    try:
+        if len(blacks) == 0: keySignature = MajorMinor('C', 'A')
+        elif len(blacks) == 1:
+            if blacks[0] == 'F#':
+                assert 'F' not in gamma
+                keySignature = MajorMinor('G', 'E')
+            elif blacks[0] == 'Bb':
+                assert 'B' not in gamma
+                keySignature = MajorMinor('F', 'D')
+            else: keySignature = MajorMinor('D', 'B')
 
-    if len(blacks) == 0: keySignature = MajorMinor('C', 'A')
+        elif len(blacks) == 2:
+            if blacks == ['C#', 'F#']:
+                assert 'C' not in gamma and 'F' not in gamma
+                keySignature = MajorMinor('D', 'B')
+            elif blacks == ['Bb', 'Eb']:
+                assert 'B' not in gamma and 'E' not in gamma
+                keySignature = MajorMinor('Bb', 'G')
+            else: keySignature = MajorMinor('A', 'F#')
 
-    elif len(blacks) == 1:
-        if blacks[0] == 'F#':
-            assert 'F' not in gamma
-            keySignature = MajorMinor('G', 'E')
-        elif blacks[0] == 'Bb':
-            assert 'B' not in gamma
-            keySignature = MajorMinor('F', 'D')
-        else: assert False
+        elif len(blacks) == 3:
+            if blacks == ['Ab', 'C#', 'F#']:
+                assert 'C' not in gamma and 'F' not in gamma and 'G' not in gamma
+                keySignature = MajorMinor('A', 'F#')
+            elif blacks == ['Ab', 'Bb', 'Eb']:
+                assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma
+                keySignature = MajorMinor('Eb', 'C')
+            else: keySignature = MajorMinor('E', 'C#')
 
-    elif len(blacks) == 2:
-        if blacks == ['C#', 'F#']:
-            assert 'C' not in gamma and 'F' not in gamma
-            keySignature = MajorMinor('D', 'B')
-        elif blacks == ['Bb', 'Eb']:
-            assert 'B' not in gamma and 'E' not in gamma
-            keySignature = MajorMinor('Bb', 'G')
-        else: assert False
+        elif len(blacks) == 4:
+            if blacks == ['Ab', 'C#', 'Eb', 'F#']:
+                assert 'C' not in gamma and 'D' not in gamma and 'F' not in gamma and 'G' not in gamma
+                keySignature = MajorMinor('E', 'C#')
+            elif blacks == ['Ab', 'Bb', 'C#', 'Eb']:
+                assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma and 'D' not in gamma
+                keySignature = MajorMinor('Ab', 'F')
+            else: keySignature = MajorMinor('B', 'Ab')
 
-    elif len(blacks) == 3:
-        if blacks == ['Ab', 'C#', 'F#']:
-            assert 'C' not in gamma and 'F' not in gamma and 'G' not in gamma
-            keySignature = MajorMinor('A', 'F#')
-        elif blacks == ['Ab', 'Bb', 'Eb']:
-            assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma
-            keySignature = MajorMinor('Eb', 'C')
-        else: assert False
+        elif 'B' in gamma and 'E' in gamma: keySignature = MajorMinor('B', 'Ab')
+        elif 'C' in gamma and 'F' in gamma: keySignature = MajorMinor('C#', 'Bb')
+        else: keySignature = keySignature_chroma
+    except Exception as e:
+        keySignature = keySignature_chroma
 
-    elif len(blacks) == 4:
-        if blacks == ['Ab', 'C#', 'Eb', 'F#']:
-            assert 'C' not in gamma and 'D' not in gamma and 'F' not in gamma and 'G' not in gamma
-            keySignature = MajorMinor('E', 'C#')
-        elif blacks == ['Ab', 'Bb', 'C#', 'Eb']:
-            assert 'B' not in gamma and 'E' not in gamma and 'A' not in gamma and 'D' not in gamma
-            keySignature = MajorMinor('Ab', 'F')
-        else: assert False
-
-    elif 'B' in gamma and 'E' in gamma: keySignature = MajorMinor('B', 'Ab')
-    elif 'C' in gamma and 'F' in gamma: keySignature = MajorMinor('C#', 'Bb')
-    else: assert False
-       
     res = {'key':keySignature,'fileName':'.'.join(songName.split('.')[:-1]) + '.mid'}
     return res    
 

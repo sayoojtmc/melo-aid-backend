@@ -21,7 +21,10 @@ db = client.get_database('total_records')
 records = db.register
 filePath = ""
 out=""
-
+@app.route("/load")
+@cross_origin()
+def load_test():
+   return send_from_directory(BASE_DIR+'loaderio-9bc42d75aec6690dd15644a5d6d4999a.txt',filename='loaderio-9bc42d75aec6690dd15644a5d6d4999a.txt') 
 @app.route("/")
 @cross_origin()
 def hello_world():
